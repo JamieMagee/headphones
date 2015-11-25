@@ -13,16 +13,15 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Headphones.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import time
+import multiprocessing
 import shutil
 import subprocess
+import time
+
 import headphones
-import multiprocessing
-
-from headphones import logger
+import os
 from beets.mediafile import MediaFile
-
+from headphones import logger
 # xld
 import getXldProfile
 
@@ -68,7 +67,8 @@ def encode(albumPath):
 
                 if headphones.CONFIG.ENCODERLOSSLESS:
                     ext = os.path.normpath(os.path.splitext(music)[1].lstrip(".")).lower()
-                    if not use_xld and ext == 'flac' or use_xld and (ext != xldFormat and (xldInfoMusic.bitrate / 1000 > 400)):
+                    if not use_xld and ext == 'flac' or use_xld and (
+                            ext != xldFormat and (xldInfoMusic.bitrate / 1000 > 400)):
                         musicFiles.append(os.path.join(r, music))
                         musicTemp = os.path.normpath(os.path.splitext(music)[0] + '.' + encoderFormat)
                         musicTempFiles.append(os.path.join(tempDirEncode, musicTemp))
@@ -86,7 +86,7 @@ def encode(albumPath):
             encoder = os.path.join('/Applications', 'xld')
         elif headphones.CONFIG.ENCODER == 'lame':
             if headphones.SYS_PLATFORM == "win32":
-                ## NEED THE DEFAULT LAME INSTALL ON WIN!
+                # NEED THE DEFAULT LAME INSTALL ON WIN!
                 encoder = "C:/Program Files/lame/lame.exe"
             else:
                 encoder = "lame"
@@ -111,14 +111,17 @@ def encode(albumPath):
 
         if use_xld:
             if xldBitrate and (infoMusic.bitrate / 1000 <= xldBitrate):
-                logger.info('%s has bitrate <= %skb, will not be re-encoded', music.decode(headphones.SYS_ENCODING, 'replace'), xldBitrate)
+                logger.info('%s has bitrate <= %skb, will not be re-encoded',
+                            music.decode(headphones.SYS_ENCODING, 'replace'), xldBitrate)
             else:
                 encode = True
         elif headphones.CONFIG.ENCODER == 'lame':
-            if not any(music.decode(headphones.SYS_ENCODING, 'replace').lower().endswith('.' + x) for x in ["mp3", "wav"]):
+            if not any(
+                    music.decode(headphones.SYS_ENCODING, 'replace').lower().endswith('.' + x) for x in ["mp3", "wav"]):
                 logger.warn('Lame cannot encode %s format for %s, use ffmpeg', os.path.splitext(music)[1], music)
             else:
-                if music.decode(headphones.SYS_ENCODING, 'replace').lower().endswith('.mp3') and (int(infoMusic.bitrate / 1000) <= headphones.CONFIG.BITRATE):
+                if music.decode(headphones.SYS_ENCODING, 'replace').lower().endswith('.mp3') and (
+                    int(infoMusic.bitrate / 1000) <= headphones.CONFIG.BITRATE):
                     logger.info('%s has bitrate <= %skb, will not be re-encoded', music, headphones.CONFIG.BITRATE)
                 else:
                     encode = True
@@ -129,7 +132,9 @@ def encode(albumPath):
                 else:
                     encode = True
             elif headphones.CONFIG.ENCODEROUTPUTFORMAT == 'mp3' or headphones.CONFIG.ENCODEROUTPUTFORMAT == 'm4a':
-                if music.decode(headphones.SYS_ENCODING, 'replace').lower().endswith('.' + headphones.CONFIG.ENCODEROUTPUTFORMAT) and (int(infoMusic.bitrate / 1000) <= headphones.CONFIG.BITRATE):
+                if music.decode(headphones.SYS_ENCODING, 'replace').lower().endswith(
+                                '.' + headphones.CONFIG.ENCODEROUTPUTFORMAT) and (
+                    int(infoMusic.bitrate / 1000) <= headphones.CONFIG.BITRATE):
                     logger.info('%s has bitrate <= %skb, will not be re-encoded', music, headphones.CONFIG.BITRATE)
                 else:
                     encode = True
@@ -155,7 +160,7 @@ def encode(albumPath):
                 processes = headphones.CONFIG.ENCODER_MULTICORE_COUNT
 
             logger.debug("Multi-core encoding enabled, spawning %d processes",
-                processes)
+                         processes)
 
         # Use multiprocessing only if it's worth the overhead. and if it is
         # enabled. If not, then use the old fashioned way.
@@ -211,7 +216,8 @@ def encode(albumPath):
 
     # Return with error if any encoding errors
     if encoder_failed:
-        logger.error("One or more files failed to encode. Ensure you have the latest version of %s installed.", headphones.CONFIG.ENCODER)
+        logger.error("One or more files failed to encode. Ensure you have the latest version of %s installed.",
+                     headphones.CONFIG.ENCODER)
         return None
 
     time.sleep(1)
@@ -244,7 +250,7 @@ def command_map(args):
         return False
 
 
-def command(encoder, musicSource, musicDest, albumPath, xldProfile):
+def command(encoder, musicSource, musicDest, xldProfile):
     """
     Encode a given music file with a certain encoder. Returns True on success,
     or False otherwise.
@@ -269,7 +275,8 @@ def command(encoder, musicSource, musicDest, albumPath, xldProfile):
         if not headphones.CONFIG.ADVANCEDENCODER:
             opts.extend(['-h'])
             if headphones.CONFIG.ENCODERVBRCBR == 'cbr':
-                opts.extend(['--resample', str(headphones.CONFIG.SAMPLINGFREQUENCY), '-b', str(headphones.CONFIG.BITRATE)])
+                opts.extend(
+                    ['--resample', str(headphones.CONFIG.SAMPLINGFREQUENCY), '-b', str(headphones.CONFIG.BITRATE)])
             elif headphones.CONFIG.ENCODERVBRCBR == 'vbr':
                 opts.extend(['-v', str(headphones.CONFIG.ENCODERQUALITY)])
         else:
@@ -290,7 +297,8 @@ def command(encoder, musicSource, musicDest, albumPath, xldProfile):
             if headphones.CONFIG.ENCODEROUTPUTFORMAT == 'm4a':
                 opts.extend(['-strict', 'experimental'])
             if headphones.CONFIG.ENCODERVBRCBR == 'cbr':
-                opts.extend(['-ar', str(headphones.CONFIG.SAMPLINGFREQUENCY), '-ab', str(headphones.CONFIG.BITRATE) + 'k'])
+                opts.extend(
+                    ['-ar', str(headphones.CONFIG.SAMPLINGFREQUENCY), '-ab', str(headphones.CONFIG.BITRATE) + 'k'])
             elif headphones.CONFIG.ENCODERVBRCBR == 'vbr':
                 opts.extend(['-aq', str(headphones.CONFIG.ENCODERQUALITY)])
             opts.extend(['-y', '-ac', '2', '-vn'])
@@ -311,7 +319,8 @@ def command(encoder, musicSource, musicDest, albumPath, xldProfile):
             if headphones.CONFIG.ENCODEROUTPUTFORMAT == 'm4a':
                 opts.extend(['-strict', 'experimental'])
             if headphones.CONFIG.ENCODERVBRCBR == 'cbr':
-                opts.extend(['-ar', str(headphones.CONFIG.SAMPLINGFREQUENCY), '-ab', str(headphones.CONFIG.BITRATE) + 'k'])
+                opts.extend(
+                    ['-ar', str(headphones.CONFIG.SAMPLINGFREQUENCY), '-ab', str(headphones.CONFIG.BITRATE) + 'k'])
             elif headphones.CONFIG.ENCODERVBRCBR == 'vbr':
                 opts.extend(['-aq', str(headphones.CONFIG.ENCODERQUALITY)])
             opts.extend(['-y', '-ac', '2', '-vn'])
@@ -337,8 +346,8 @@ def command(encoder, musicSource, musicDest, albumPath, xldProfile):
     logger.debug(subprocess.list2cmdline(cmd))
 
     process = subprocess.Popen(cmd, startupinfo=startupinfo,
-        stdin=open(os.devnull, 'rb'), stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE)
+                               stdin=open(os.devnull, 'rb'), stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
     stdout, stderr = process.communicate(headphones.CONFIG.ENCODER)
 
     # Error if return code not zero

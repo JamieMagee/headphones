@@ -13,16 +13,15 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Headphones.  If not, see <http://www.gnu.org/licenses/>.
 
-from headphones import logger
-
+import collections
 from xml.dom import minidom
-from bs4 import BeautifulSoup
 
-import requests
 import feedparser
 import headphones
 import headphones.lock
-import collections
+import requests
+from bs4 import BeautifulSoup
+from headphones import logger
 
 # Disable SSL certificate warnings. We have our own handling
 requests.packages.urllib3.disable_warnings()

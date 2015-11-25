@@ -13,21 +13,18 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Headphones.  If not, see <http://www.gnu.org/licenses/>.
 
-#####################################
-## Stolen from Sick-Beard's sab.py ##
-#####################################
+###################################
+# Stolen from Sick-Beard's sab.py #
+###################################
 
-import MultipartPostHandler
-import headphones
 import cookielib
-import httplib
 
-from headphones.common import USER_AGENT
+import headphones
 from headphones import logger, helpers, request
+from headphones.common import USER_AGENT
 
 
 def sab_api_call(request_type=None, params={}, **kwargs):
-
     if not headphones.CONFIG.SAB_HOST.startswith('http'):
         headphones.CONFIG.SAB_HOST = 'http://' + headphones.CONFIG.SAB_HOST
 
@@ -42,11 +39,11 @@ def sab_api_call(request_type=None, params={}, **kwargs):
         params['ma_password'] = headphones.CONFIG.SAB_PASSWORD
     if headphones.CONFIG.SAB_APIKEY:
         params['apikey'] = headphones.CONFIG.SAB_APIKEY
-    
-    if request_type=='send_nzb' and headphones.CONFIG.SAB_CATEGORY:
+
+    if request_type == 'send_nzb' and headphones.CONFIG.SAB_CATEGORY:
         params['cat'] = headphones.CONFIG.SAB_CATEGORY
 
-    params['output']='json'
+    params['output'] = 'json'
 
     response = request.request_json(url, params=params, **kwargs)
 
@@ -57,8 +54,8 @@ def sab_api_call(request_type=None, params={}, **kwargs):
         logger.debug("Successfully connected to SABnzbd on url: %s" % headphones.CONFIG.SAB_HOST)
         return response
 
-def sendNZB(nzb):
 
+def sendNZB(nzb):
     params = {}
     # if it's a normal result we just pass SAB the URL
     if nzb.resultType == "nzb":
@@ -102,15 +99,15 @@ def sendNZB(nzb):
 
 
 def checkConfig():
-
     params = {'mode': 'get_config',
-               'section': 'misc',
-               }
+              'section': 'misc',
+              }
 
     config_options = sab_api_call(params=params)
-    
+
     if not config_options:
-        logger.warn("Unable to read SABnzbd config file - cannot determine renaming options (might affect auto & forced post processing)")
+        logger.warn(
+            "Unable to read SABnzbd config file - cannot determine renaming options (might affect auto & forced post processing)")
         return (0, 0)
 
     replace_spaces = config_options['config']['misc']['replace_spaces']

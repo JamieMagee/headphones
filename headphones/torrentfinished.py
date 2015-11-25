@@ -13,12 +13,13 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Headphones.  If not, see <http://www.gnu.org/licenses/>.
 
+import threading
+
+import headphones
 from headphones import db, utorrent, transmission, logger
 
-import threading
-import headphones
-
 postprocessor_lock = threading.Lock()
+
 
 def checkTorrentFinished():
     """

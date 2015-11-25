@@ -13,44 +13,41 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Headphones.  If not, see <http://www.gnu.org/licenses/>.
 
-#####################################
-## Stolen from Sick-Beard's db.py  ##
-#####################################
+###################################
+# Stolen from Sick-Beard's db.py  #
+###################################
 
 from __future__ import with_statement
 
-import os
 import sqlite3
 
 import headphones
-
+import os
 from headphones import logger
 
 
 def dbFilename(filename="headphones.db"):
-
     return os.path.join(headphones.DATA_DIR, filename)
 
 
 def getCacheSize():
-    #this will protect against typecasting problems produced by empty string and None settings
+    # this will protect against typecasting problems produced by empty string and None settings
     if not headphones.CONFIG.CACHE_SIZEMB:
-        #sqlite will work with this (very slowly)
+        # sqlite will work with this (very slowly)
         return 0
     return int(headphones.CONFIG.CACHE_SIZEMB)
 
 
 class DBConnection:
-
     def __init__(self, filename="headphones.db"):
 
         self.filename = filename
         self.connection = sqlite3.connect(dbFilename(filename), timeout=20)
-        #don't wait for the disk to finish writing
+        # don't wait for the disk to finish writing
         self.connection.execute("PRAGMA synchronous = OFF")
-        #journal disabled since we never do rollbacks
+        # journal disabled since we never do rollbacks
         self.connection.execute("PRAGMA journal_mode = %s" % headphones.CONFIG.JOURNAL_MODE)
-        #64mb of cache memory,probably need to make it user configurable
+        # 64mb of cache memory,probably need to make it user configurable
         self.connection.execute("PRAGMA cache_size=-%s" % (getCacheSize() * 1024))
         self.connection.row_factory = sqlite3.Row
 
@@ -94,9 +91,8 @@ class DBConnection:
 
         changesBefore = self.connection.total_changes
 
-        genParams = lambda myDict: [x + " = ?" for x in myDict.keys()]
-
-        update_query = "UPDATE " + tableName + " SET " + ", ".join(genParams(valueDict)) + " WHERE " + " AND ".join(genParams(keyDict))
+        update_query = "UPDATE " + tableName + " SET " + ", ".join(self.genParams(valueDict)) + " WHERE " + " AND ".join(
+            self.genParams(keyDict))
 
         self.action(update_query, valueDict.values() + keyDict.values())
 
@@ -109,3 +105,7 @@ class DBConnection:
                 self.action(insert_query, valueDict.values() + keyDict.values())
             except sqlite3.IntegrityError:
                 logger.info('Queries failed: %s and %s', update_query, insert_query)
+
+    @staticmethod
+    def genParams(dict):
+        return [x + " = ?" for x in dict.keys()]

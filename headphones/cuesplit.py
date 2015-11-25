@@ -15,14 +15,14 @@
 
 # Most of this lifted from here: https://github.com/SzieberthAdam/gneposis-cdgrab
 
-import os
-import sys
-import re
-import subprocess
 import copy
 import glob
+import subprocess
+import sys
 
 import headphones
+import os
+import re
 from headphones import logger
 from mutagen.flac import FLAC
 
@@ -62,7 +62,7 @@ WAVE_FILE_TYPE_BY_EXTENSION = {
     '.flac': 'Free Lossless Audio Codec'
 }
 
-#SHNTOOL_COMPATIBLE = ("Free Lossless Audio Codec", "Waveform Audio", "Monkey's Audio")
+# SHNTOOL_COMPATIBLE = ("Free Lossless Audio Codec", "Waveform Audio", "Monkey's Audio")
 
 # TODO: Make this better!
 # this module-level variable is bad. :(
@@ -288,7 +288,7 @@ class CueFile(File):
             global line_content
             c = self.content.splitlines()
             header_dict = {}
-            #remaining_headers = CUE_HEADER
+            # remaining_headers = CUE_HEADER
             remaining_headers = copy.copy(CUE_HEADER)
             line_index = 0
             match = True
@@ -371,8 +371,8 @@ class CueFile(File):
 
         if not self.content:
             try:
-                 with open(self.name, encoding="cp1252") as cue_file:
-                     self.content = cue_file.read()
+                with open(self.name, encoding="cp1252") as cue_file:
+                    self.content = cue_file.read()
             except:
                 raise ValueError('Cant encode CUE Sheet.')
 
@@ -472,15 +472,16 @@ class MetaFile(File):
         if 'genre' in CUE_META.content:
             common_tags['genre'] = CUE_META.content['genre']
 
-        #freeform tags
-        #freeform_tags['country'] = self.content['country']
-        #freeform_tags['releasedate'] = self.content['releasedate']
+        # freeform tags
+        # freeform_tags['country'] = self.content['country']
+        # freeform_tags['releasedate'] = self.content['releasedate']
 
         return common_tags, freeform_tags
 
     def folders(self):
         artist = self.content['artist']
-        album = self.content['date'] + ' - ' + self.content['title'] + ' (' + self.content['label'] + ' - ' + self.content['catalog'] + ')'
+        album = self.content['date'] + ' - ' + self.content['title'] + ' (' + self.content['label'] + ' - ' + \
+                self.content['catalog'] + ')'
         return artist, album
 
     def complete(self):
@@ -534,6 +535,7 @@ class WaveFile(File):
     def mutagen(self):
         if self.type == 'Free Lossless Audio Codec':
             return FLAC(self.name)
+
 
 def split(albumpath):
     global CUE_META
@@ -590,7 +592,7 @@ def split(albumpath):
             splitter = 'shntool'
 
     if splitter == 'shntool' and not check_splitter(splitter):
-            raise ValueError('Command not found, ensure shntool or xld installed')
+        raise ValueError('Command not found, ensure shntool or xld installed')
 
     # Determine if file can be split
     if wave.name_ext not in WAVE_FILE_TYPE_BY_EXTENSION.keys():

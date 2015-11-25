@@ -2,10 +2,11 @@
 Locking-related classes
 """
 
-import headphones.logger
-import time
-import threading
 import Queue
+import threading
+import time
+
+import headphones.logger
 
 
 class TimedLock(object):
@@ -50,7 +51,7 @@ class TimedLock(object):
                 continue
             self.queue.task_done()
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self):
         """
         Called when exiting the with block.
         """

@@ -13,18 +13,17 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Headphones.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import sys
+
 import cherrypy
 import headphones
-
+import os
 from headphones import logger
-from headphones.webserve import WebInterface
 from headphones.helpers import create_https_certificates
+from headphones.webserve import WebInterface
 
 
 def initialize(options):
-
     # HTTPS stuff stolen from sickbeard
     enable_https = options['enable_https']
     https_cert = options['https_cert']
@@ -36,12 +35,12 @@ def initialize(options):
         if not (https_cert and os.path.exists(https_cert)) or not (https_key and os.path.exists(https_key)):
             if not create_https_certificates(https_cert, https_key):
                 logger.warn("Unable to create certificate and key. Disabling " \
-                    "HTTPS")
+                            "HTTPS")
                 enable_https = False
 
         if not (os.path.exists(https_cert) and os.path.exists(https_key)):
             logger.warn("Disabled HTTPS because of missing certificate and " \
-                "key.")
+                        "key.")
             enable_https = False
 
     options_dict = {
@@ -63,7 +62,7 @@ def initialize(options):
         protocol = "http"
 
     logger.info("Starting Headphones web server on %s://%s:%d/", protocol,
-        options['http_host'], options['http_port'])
+                options['http_host'], options['http_port'])
     cherrypy.config.update(options_dict)
 
     conf = {

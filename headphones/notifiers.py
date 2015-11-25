@@ -13,30 +13,26 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Headphones.  If not, see <http://www.gnu.org/licenses/>.
 
-from headphones import logger, helpers, common, request
-
-from xml.dom import minidom
-from httplib import HTTPSConnection
-from urlparse import parse_qsl
-from urllib import urlencode
-from pynma import pynma
-
-import base64
-import cherrypy
+import email.utils
+import json
+import smtplib
+import subprocess
 import urllib
 import urllib2
-import headphones
-import os.path
-import subprocess
-import gntp.notifier
-import json
-
-import oauth2 as oauth
-import pythontwitter as twitter
-
 from email.mime.text import MIMEText
-import smtplib
-import email.utils
+from httplib import HTTPSConnection
+from urllib import urlencode
+from urlparse import parse_qsl
+
+import pythontwitter as twitter
+from pynma import pynma
+
+import cherrypy
+import gntp.notifier
+import headphones
+import oauth2 as oauth
+import os.path
+from headphones import logger, helpers, common, request
 
 
 class GROWL(object):
@@ -95,7 +91,7 @@ class GROWL(object):
 
         # Send it, including an image
         image_file = os.path.join(str(headphones.PROG_DIR),
-            "data/images/headphoneslogo.png")
+                                  "data/images/headphoneslogo.png")
 
         with open(image_file, 'rb') as f:
             image = f.read()
@@ -114,7 +110,7 @@ class GROWL(object):
         logger.info(u"Growl notifications sent.")
 
     def updateLibrary(self):
-        #For uniformity reasons not removed
+        # For uniformity reasons not removed
         return
 
     def test(self, host, password):
@@ -151,24 +147,24 @@ class PROWL(object):
                 'priority': headphones.CONFIG.PROWL_PRIORITY}
 
         http_handler.request("POST",
-                                "/publicapi/add",
-                                headers={'Content-type': "application/x-www-form-urlencoded"},
-                                body=urlencode(data))
+                             "/publicapi/add",
+                             headers={'Content-type': "application/x-www-form-urlencoded"},
+                             body=urlencode(data))
         response = http_handler.getresponse()
         request_status = response.status
 
         if request_status == 200:
-                logger.info(u"Prowl notifications sent.")
-                return True
+            logger.info(u"Prowl notifications sent.")
+            return True
         elif request_status == 401:
-                logger.info(u"Prowl auth failed: %s" % response.reason)
-                return False
+            logger.info(u"Prowl auth failed: %s" % response.reason)
+            return False
         else:
-                logger.info(u"Prowl notification failed.")
-                return False
+            logger.info(u"Prowl notification failed.")
+            return False
 
     def updateLibrary(self):
-        #For uniformity reasons not removed
+        # For uniformity reasons not removed
         return
 
     def test(self, keys, priority):
@@ -185,7 +181,6 @@ class MPC(object):
     """
 
     def __init__(self):
-
         pass
 
     def notify(self):
@@ -218,7 +213,8 @@ class XBMC(object):
         url = host + '/jsonrpc'
 
         if self.password:
-            response = request.request_json(url, method="post", data=json.dumps(data), headers=headers, auth=(self.username, self.password))
+            response = request.request_json(url, method="post", data=json.dumps(data), headers=headers,
+                                            auth=(self.username, self.password))
         else:
             response = request.request_json(url, method="post", data=json.dumps(data), headers=headers)
 
@@ -244,19 +240,20 @@ class XBMC(object):
 
         header = "Headphones"
         message = "%s - %s added to your library" % (artist, album)
-        time = "3000" # in ms
+        time = "3000"  # in ms
 
         for host in hosts:
             logger.info('Sending notification command to XMBC @ ' + host)
             try:
-                version = self._sendjson(host, 'Application.GetProperties', {'properties': ['version']})['version']['major']
+                version = self._sendjson(host, 'Application.GetProperties', {'properties': ['version']})['version'][
+                    'major']
 
-                if version < 12: #Eden
+                if version < 12:  # Eden
                     notification = header + "," + message + "," + time + "," + albumartpath
                     notifycommand = {'command': 'ExecBuiltIn', 'parameter': 'Notification(' + notification + ')'}
                     request = self._sendhttp(host, notifycommand)
 
-                else: #Frodo
+                else:  # Frodo
                     params = {'title': header, 'message': message, 'displaytime': int(time), 'image': albumartpath}
                     request = self._sendjson(host, 'GUI.ShowNotification', params)
 
@@ -335,7 +332,8 @@ class Plex(object):
         url = host + '/jsonrpc'
 
         if self.password:
-            response = request.request_json(url, method="post", data=json.dumps(data), headers=headers, auth=(self.username, self.password))
+            response = request.request_json(url, method="post", data=json.dumps(data), headers=headers,
+                                            auth=(self.username, self.password))
         else:
             response = request.request_json(url, method="post", data=json.dumps(data), headers=headers)
 
@@ -376,19 +374,20 @@ class Plex(object):
 
         header = "Headphones"
         message = "%s - %s added to your library" % (artist, album)
-        time = "3000" # in ms
+        time = "3000"  # in ms
 
         for host in hosts:
             logger.info('Sending notification command to Plex client @ ' + host)
             try:
-                version = self._sendjson(host, 'Application.GetProperties', {'properties': ['version']})['version']['major']
+                version = self._sendjson(host, 'Application.GetProperties', {'properties': ['version']})['version'][
+                    'major']
 
-                if version < 12: #Eden
+                if version < 12:  # Eden
                     notification = header + "," + message + "," + time + "," + albumartpath
                     notifycommand = {'command': 'ExecBuiltIn', 'parameter': 'Notification(' + notification + ')'}
                     request = self._sendhttp(host, notifycommand)
 
-                else: #Frodo
+                else:  # Frodo
                     params = {'title': header, 'message': message, 'displaytime': int(time), 'image': albumartpath}
                     request = self._sendjson(host, 'GUI.ShowNotification', params)
 
@@ -438,7 +437,6 @@ class NMA(object):
 
 
 class PUSHBULLET(object):
-
     def __init__(self):
         self.apikey = headphones.CONFIG.PUSHBULLET_APIKEY
         self.deviceid = headphones.CONFIG.PUSHBULLET_DEVICEID
@@ -456,8 +454,8 @@ class PUSHBULLET(object):
         if self.deviceid:
             data['device_iden'] = self.deviceid
 
-        headers={'Content-type': "application/json",
-                 'Authorization': 'Bearer ' + headphones.CONFIG.PUSHBULLET_APIKEY}
+        headers = {'Content-type': "application/json",
+                   'Authorization': 'Bearer ' + headphones.CONFIG.PUSHBULLET_APIKEY}
 
         response = request.request_json(url, method="post", headers=headers, data=json.dumps(data))
 
@@ -468,8 +466,8 @@ class PUSHBULLET(object):
             logger.info(u"PushBullet notification failed.")
             return False
 
-class PUSHALOT(object):
 
+class PUSHALOT(object):
     def notify(self, message, event):
         if not headphones.CONFIG.PUSHALOT_ENABLED:
             return
@@ -487,9 +485,9 @@ class PUSHALOT(object):
                 'Body': message.encode("utf-8")}
 
         http_handler.request("POST",
-                                "/api/sendmessage",
-                                headers={'Content-type': "application/x-www-form-urlencoded"},
-                                body=urlencode(data))
+                             "/api/sendmessage",
+                             headers={'Content-type': "application/x-www-form-urlencoded"},
+                             body=urlencode(data))
         response = http_handler.getresponse()
         request_status = response.status
 
@@ -498,14 +496,14 @@ class PUSHALOT(object):
         logger.debug(u"Pushalot response body: %r" % response.read())
 
         if request_status == 200:
-                logger.info(u"Pushalot notifications sent.")
-                return True
+            logger.info(u"Pushalot notifications sent.")
+            return True
         elif request_status == 410:
-                logger.info(u"Pushalot auth failed: %s" % response.reason)
-                return False
+            logger.info(u"Pushalot auth failed: %s" % response.reason)
+            return False
         else:
-                logger.info(u"Pushalot notification failed.")
-                return False
+            logger.info(u"Pushalot notification failed.")
+            return False
 
 
 class Synoindex(object):
@@ -535,7 +533,7 @@ class Synoindex(object):
         try:
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=headphones.PROG_DIR)
             out, error = p.communicate()
-            #synoindex never returns any codes other than '0', highly irritating
+            # synoindex never returns any codes other than '0', highly irritating
         except OSError, e:
             logger.warn("Error sending notification: %s" % str(e))
 
@@ -546,7 +544,6 @@ class Synoindex(object):
 
 
 class PUSHOVER(object):
-
     def __init__(self):
         self.enabled = headphones.CONFIG.PUSHOVER_ENABLED
         self.keys = headphones.CONFIG.PUSHOVER_KEYS
@@ -584,7 +581,7 @@ class PUSHOVER(object):
             return False
 
     def updateLibrary(self):
-        #For uniformity reasons not removed
+        # For uniformity reasons not removed
         return
 
     def test(self, keys, priority):
@@ -596,7 +593,6 @@ class PUSHOVER(object):
 
 
 class TwitterNotifier(object):
-
     REQUEST_TOKEN_URL = 'https://api.twitter.com/oauth/request_token'
     ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
     AUTHORIZATION_URL = 'https://api.twitter.com/oauth/authorize'
@@ -698,7 +694,6 @@ class TwitterNotifier(object):
 
 
 class OSX_NOTIFY(object):
-
     def __init__(self):
         try:
             self.objc = __import__("objc")
@@ -751,7 +746,7 @@ class OSX_NOTIFY(object):
             if image:
                 source_img = self.AppKit.NSImage.alloc().initByReferencingFile_(image)
                 notification.setContentImage_(source_img)
-                #notification.set_identityImage_(source_img)
+                # notification.set_identityImage_(source_img)
             notification.setHasActionButton_(False)
 
             notification_center = NSUserNotificationCenter.defaultUserNotificationCenter()
@@ -764,12 +759,11 @@ class OSX_NOTIFY(object):
             logger.warn('Error sending OS X Notification: %s' % e)
             return False
 
-    def swizzled_bundleIdentifier(self, original, swizzled):
+    def swizzled_bundleIdentifier(self):
         return 'ade.headphones.osxnotify'
 
 
 class BOXCAR(object):
-
     def __init__(self):
         self.url = 'https://new.boxcar.io/api/notifications'
 
@@ -783,7 +777,7 @@ class BOXCAR(object):
                 'notification[title]': title.encode('utf-8'),
                 'notification[long_message]': message.encode('utf-8'),
                 'notification[sound]': "done"
-                })
+            })
 
             req = urllib2.Request(self.url)
             handle = urllib2.urlopen(req, data)
@@ -796,13 +790,12 @@ class BOXCAR(object):
 
 
 class SubSonicNotifier(object):
-
     def __init__(self):
         self.host = headphones.CONFIG.SUBSONIC_HOST
         self.username = headphones.CONFIG.SUBSONIC_USERNAME
         self.password = headphones.CONFIG.SUBSONIC_PASSWORD
 
-    def notify(self, albumpaths):
+    def notify(self):
         # Correct URL
         if not self.host.lower().startswith("http"):
             self.host = "http://" + self.host
@@ -812,10 +805,10 @@ class SubSonicNotifier(object):
 
         # Invoke request
         request.request_response(self.host + "musicFolderSettings.view?scanNow",
-            auth=(self.username, self.password))
+                                 auth=(self.username, self.password))
+
 
 class Email(object):
-
     def notify(self, subject, message):
 
         message = MIMEText(message, 'plain', "utf-8")

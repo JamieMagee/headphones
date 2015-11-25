@@ -13,21 +13,21 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Headphones.  If not, see <http://www.gnu.org/licenses/>.
 
-from headphones import db, mb, updater, importer, searcher, cache, postprocessor, versioncheck, logger
-
-import headphones
 import json
 
-cmd_list = ['getIndex', 'getArtist', 'getAlbum', 'getUpcoming', 'getWanted', 'getSnatched', 'getSimilar', 'getHistory', 'getLogs',
+import headphones
+from headphones import db, mb, updater, importer, searcher, cache, postprocessor, versioncheck, logger
+
+cmd_list = ['getIndex', 'getArtist', 'getAlbum', 'getUpcoming', 'getWanted', 'getSnatched', 'getSimilar', 'getHistory',
+            'getLogs',
             'findArtist', 'findAlbum', 'addArtist', 'delArtist', 'pauseArtist', 'resumeArtist', 'refreshArtist',
-            'addAlbum', 'queueAlbum', 'unqueueAlbum', 'forceSearch', 'forceProcess', 'forceActiveArtistsUpdate', 
-            'getVersion', 'checkGithub', 'shutdown', 'restart', 'update', 'getArtistArt', 'getAlbumArt', 
+            'addAlbum', 'queueAlbum', 'unqueueAlbum', 'forceSearch', 'forceProcess', 'forceActiveArtistsUpdate',
+            'getVersion', 'checkGithub', 'shutdown', 'restart', 'update', 'getArtistArt', 'getAlbumArt',
             'getArtistInfo', 'getAlbumInfo', 'getArtistThumb', 'getAlbumThumb', 'clearLogs',
             'choose_specific_download', 'download_specific_release']
 
 
 class Api(object):
-
     def __init__(self):
 
         self.apikey = None
@@ -40,7 +40,7 @@ class Api(object):
 
         self.callback = None
 
-    def checkParams(self, *args, **kwargs):
+    def checkParams(self, **kwargs):
 
         if not headphones.CONFIG.API_ENABLED:
             self.data = 'API not enabled'
@@ -107,7 +107,7 @@ class Api(object):
 
         return rows_as_dic
 
-    def _getIndex(self, **kwargs):
+    def _getIndex(self):
 
         self.data = self._dic_from_query(
             'SELECT * from artists order by ArtistSortName COLLATE NOCASE')
@@ -151,35 +151,35 @@ class Api(object):
             'album': album, 'tracks': tracks, 'description': description}
         return
 
-    def _getHistory(self, **kwargs):
+    def _getHistory(self):
         self.data = self._dic_from_query(
             'SELECT * from snatched WHERE status NOT LIKE "Seed%" order by DateAdded DESC')
         return
 
-    def _getUpcoming(self, **kwargs):
+    def _getUpcoming(self):
         self.data = self._dic_from_query(
             "SELECT * from albums WHERE ReleaseDate > date('now') order by ReleaseDate DESC")
         return
 
-    def _getWanted(self, **kwargs):
+    def _getWanted(self):
         self.data = self._dic_from_query(
             "SELECT * from albums WHERE Status='Wanted'")
         return
 
-    def _getSnatched(self, **kwargs):
+    def _getSnatched(self):
         self.data = self._dic_from_query(
             "SELECT * from albums WHERE Status='Snatched'")
         return
-        
-    def _getSimilar(self, **kwargs):
+
+    def _getSimilar(self):
         self.data = self._dic_from_query('SELECT * from lastfmcloud')
         return
 
-    def _getLogs(self, **kwargs):
+    def _getLogs(self):
         self.data = headphones.LOG_LIST
         return
 
-    def _clearLogs(self, **kwargs):
+    def _clearLogs(self):
         headphones.LOG_LIST = []
         self.data = 'Cleared log'
         return
@@ -324,7 +324,7 @@ class Api(object):
         newValueDict = {'Status': 'Skipped'}
         myDB.upsert("albums", newValueDict, controlValueDict)
 
-    def _forceSearch(self, **kwargs):
+    def _forceSearch(self):
         searcher.searchforalbum()
 
     def _forceProcess(self, **kwargs):
@@ -333,10 +333,10 @@ class Api(object):
             self.dir = kwargs['dir']
         postprocessor.forcePostProcess(self.dir)
 
-    def _forceActiveArtistsUpdate(self, **kwargs):
+    def _forceActiveArtistsUpdate(self):
         updater.dbUpdate()
 
-    def _getVersion(self, **kwargs):
+    def _getVersion(self):
         self.data = {
             'git_path': headphones.CONFIG.GIT_PATH,
             'install_type': headphones.INSTALL_TYPE,
@@ -345,17 +345,17 @@ class Api(object):
             'commits_behind': headphones.COMMITS_BEHIND,
         }
 
-    def _checkGithub(self, **kwargs):
+    def _checkGithub(self):
         versioncheck.checkGithub()
         self._getVersion()
 
-    def _shutdown(self, **kwargs):
+    def _shutdown(self):
         headphones.SIGNAL = 'shutdown'
 
-    def _restart(self, **kwargs):
+    def _restart(self):
         headphones.SIGNAL = 'restart'
 
-    def _update(self, **kwargs):
+    def _update(self):
         headphones.SIGNAL = 'update'
 
     def _getArtistArt(self, **kwargs):
@@ -432,7 +432,6 @@ class Api(object):
         results_as_dicts = []
 
         for result in results:
-
             result_dict = {
                 'title': result[0],
                 'size': result[1],

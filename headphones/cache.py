@@ -13,9 +13,8 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Headphones.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import headphones
-
+import os
 from headphones import db, helpers, logger, lastfm, request
 
 LASTFM_API_KEY = "690e1ed3bc00bc91804cd8f7fe5ed6d4"
@@ -45,8 +44,8 @@ class Cache(object):
 
     def __init__(self):
         self.id = None
-        self.id_type = None # 'artist' or 'album' - set automatically depending on whether ArtistID or AlbumID is passed
-        self.query_type = None # 'artwork','thumb' or 'info' - set automatically
+        self.id_type = None  # 'artist' or 'album' - set automatically depending on whether ArtistID or AlbumID is passed
+        self.query_type = None  # 'artwork','thumb' or 'info' - set automatically
 
         self.artwork_files = []
         self.thumb_files = []
@@ -182,11 +181,13 @@ class Cache(object):
         if ArtistID:
             self.id = ArtistID
             self.id_type = 'artist'
-            db_info = myDB.action('SELECT Summary, Content, LastUpdated FROM descriptions WHERE ArtistID=?', [self.id]).fetchone()
+            db_info = myDB.action('SELECT Summary, Content, LastUpdated FROM descriptions WHERE ArtistID=?',
+                                  [self.id]).fetchone()
         else:
             self.id = AlbumID
             self.id_type = 'album'
-            db_info = myDB.action('SELECT Summary, Content, LastUpdated FROM descriptions WHERE ReleaseGroupID=?', [self.id]).fetchone()
+            db_info = myDB.action('SELECT Summary, Content, LastUpdated FROM descriptions WHERE ReleaseGroupID=?',
+                                  [self.id]).fetchone()
 
         if not db_info or not db_info['LastUpdated'] or not self._is_current(date=db_info['LastUpdated']):
 
@@ -309,13 +310,16 @@ class Cache(object):
                 logger.debug('No artist thumbnail image found')
 
         else:
-            dbalbum = myDB.action('SELECT ArtistName, AlbumTitle, ReleaseID FROM albums WHERE AlbumID=?', [self.id]).fetchone()
+            dbalbum = myDB.action('SELECT ArtistName, AlbumTitle, ReleaseID FROM albums WHERE AlbumID=?',
+                                  [self.id]).fetchone()
             if dbalbum['ReleaseID'] != self.id:
                 data = lastfm.request_lastfm("album.getinfo", mbid=dbalbum['ReleaseID'], api_key=LASTFM_API_KEY)
                 if not data:
-                    data = lastfm.request_lastfm("album.getinfo", artist=dbalbum['ArtistName'], album=dbalbum['AlbumTitle'], api_key=LASTFM_API_KEY)
+                    data = lastfm.request_lastfm("album.getinfo", artist=dbalbum['ArtistName'],
+                                                 album=dbalbum['AlbumTitle'], api_key=LASTFM_API_KEY)
             else:
-                data = lastfm.request_lastfm("album.getinfo", artist=dbalbum['ArtistName'], album=dbalbum['AlbumTitle'], api_key=LASTFM_API_KEY)
+                data = lastfm.request_lastfm("album.getinfo", artist=dbalbum['ArtistName'], album=dbalbum['AlbumTitle'],
+                                             api_key=LASTFM_API_KEY)
 
             if not data:
                 return
@@ -406,7 +410,8 @@ class Cache(object):
 
         # Grab the thumbnail as well if we're getting the full artwork (as long
         # as it's missing/outdated.
-        if thumb_url and self.query_type in ['thumb', 'artwork'] and not (self.thumb_files and self._is_current(self.thumb_files[0])):
+        if thumb_url and self.query_type in ['thumb', 'artwork'] and not (
+            self.thumb_files and self._is_current(self.thumb_files[0])):
             artwork = request.request_content(thumb_url, timeout=20)
 
             if artwork:
