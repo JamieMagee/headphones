@@ -336,9 +336,7 @@ def more_filtering(results, album, albumlength, new):
     for result in results:
 
         normalizedAlbumArtist = removeDisallowedFilenameChars(album['ArtistName'])
-        normalizedAlbumTitle = removeDisallowedFilenameChars(album['AlbumTitle'])
         normalizedResultTitle = removeDisallowedFilenameChars(result[0])
-        artistTitleCount = normalizedResultTitle.count(normalizedAlbumArtist)
 
         # WHAT DOES THIS DO?
         # if normalizedAlbumArtist in normalizedAlbumTitle and artistTitleCount < 2:
@@ -481,7 +479,6 @@ def searchNZB(album, new=False, losslessOnly=False, albumlength=None, choose_spe
 
     # Replace bad characters in the term and unicode it
     term = re.sub('[\.\-\/]', ' ', term).encode('utf-8')
-    artistterm = re.sub('[\.\-\/]', ' ', cleanartist).encode('utf-8')
 
     # If Preferred Bitrate and High Limit and Allow Lossless then get both lossy and lossless
     if headphones.CONFIG.PREFERRED_QUALITY == 2 and headphones.CONFIG.PREFERRED_BITRATE and headphones.CONFIG.PREFERRED_BITRATE_HIGH_BUFFER and headphones.CONFIG.PREFERRED_BITRATE_ALLOW_LOSSLESS:
@@ -1052,7 +1049,6 @@ def searchTorrent(album, new=False, losslessOnly=False, albumlength=None, choose
     global gazelle  # persistent what.cd api object to reduce number of login attempts
     global ruobj  # and rutracker
 
-    albumid = album['AlbumID']
     reldate = album['ReleaseDate']
 
     year = get_year_from_release_date(reldate)

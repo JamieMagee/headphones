@@ -233,8 +233,6 @@ def addTorrent(link):
 
 
 def getFolder(hash):
-    uTorrentClient = utorrentclient()
-
     # Get Active Directory from settings
     active_dir, completed_dir = getSettingsDirectories()
 
