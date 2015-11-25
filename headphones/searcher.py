@@ -334,15 +334,6 @@ def more_filtering(results, album, albumlength, new):
     newlist = []
 
     for result in results:
-
-        normalizedAlbumArtist = removeDisallowedFilenameChars(album['ArtistName'])
-        normalizedResultTitle = removeDisallowedFilenameChars(result[0])
-
-        # WHAT DOES THIS DO?
-        # if normalizedAlbumArtist in normalizedAlbumTitle and artistTitleCount < 2:
-        #    logger.info("Removing %s from %s" % (result[0], result[3]))
-        #    continue
-
         if low_size_limit and (int(result[1]) < low_size_limit):
             logger.info("%s from %s is too small for this album - not considering it. (Size: %s, Minsize: %s)",
                         result[0], result[3], helpers.bytes_to_mb(result[1]), helpers.bytes_to_mb(low_size_limit))
