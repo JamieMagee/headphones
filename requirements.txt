@@ -17,7 +17,6 @@ mutagen
 munkres
 oauth2
 OrderedDict
-osxnotify
 python-twitter
 pytz
 requests
