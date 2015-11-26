@@ -83,13 +83,13 @@ def torrent_to_file(target_file, data):
 
     # Try to change permissions
     if headphones.CONFIG.FILE_PERMISSIONS_ENABLED:
-    try:
-        os.chmod(target_file, int(headphones.CONFIG.FILE_PERMISSIONS, 8))
-    except OSError as e:
-            logger.warn(
-                "Could not change permissions for file '%s': %s. Continuing.",
-                target_file.decode(headphones.SYS_ENCODING, "replace"),
-                e.message)
+        try:
+            os.chmod(target_file, int(headphones.CONFIG.FILE_PERMISSIONS, 8))
+        except OSError as e:
+                logger.warn(
+                    "Could not change permissions for file '%s': %s. Continuing.",
+                    target_file.decode(headphones.SYS_ENCODING, "replace"),
+                    e.message)
     else:
         logger.debug(
             "Not changing file permissions, since it is disabled: %s",
@@ -117,7 +117,7 @@ def read_torrent_name(torrent_file, default_name=None):
     if torrent_info:
         try:
             return torrent_info["info"]["name"]
-        except KeyError:
+        except KeyError as e:
             if default_name:
                 logger.warning("Couldn't get name from torrent file: %s. " \
                     "Defaulting to '%s'", e, default_name)

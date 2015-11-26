@@ -17,6 +17,9 @@ mutagen
 munkres
 oauth2
 OrderedDict
+git+https://github.com/cohena/pygazelle.git
+pyopenssl
+git+https://github.com/babs/pyrowl.git
 python-twitter
 pytz
 requests

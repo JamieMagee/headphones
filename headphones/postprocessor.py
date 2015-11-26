@@ -107,7 +107,7 @@ def verify(albumid, albumpath, Kind=None, forced=False, keep_original_folder=Fal
                 frozen = re.search(r' \(Frozen\)(?:\[\d+\])?', albumpath)
                 if not frozen:
                     if headphones.CONFIG.RENAME_FROZEN:
-                    renameUnprocessedFolder(albumpath, tag="Frozen")
+                        renameUnprocessedFolder(albumpath, tag="Frozen")
                     else:
                         logger.warn(u"Won't rename %s to mark as 'Frozen', because it is disabled.", albumpath.decode(headphones.SYS_ENCODING, 'replace'))
                 return
@@ -280,7 +280,7 @@ def verify(albumid, albumpath, Kind=None, forced=False, keep_original_folder=Fal
     processed = re.search(r' \(Unprocessed\)(?:\[\d+\])?', albumpath)
     if not processed:
         if headphones.CONFIG.RENAME_UNPROCESSED:
-        renameUnprocessedFolder(albumpath, tag="Unprocessed")
+            renameUnprocessedFolder(albumpath, tag="Unprocessed")
         else:
             logger.warn(u"Won't rename %s to mark as 'Unprocessed', because it is disabled.", albumpath.decode(headphones.SYS_ENCODING, 'replace'))
 
@@ -843,11 +843,11 @@ def moveFiles(albumpath, release):
             temp_f = os.path.join(temp_f, f)
 
             if headphones.CONFIG.FOLDER_PERMISSIONS_ENABLED:
-            try:
-                os.chmod(os.path.normpath(temp_f).encode(headphones.SYS_ENCODING, 'replace'),
-                         int(headphones.CONFIG.FOLDER_PERMISSIONS, 8))
-            except Exception as e:
-                    logger.error("Error trying to change permissions on folder: %s. %s", temp_f.decode(headphones.SYS_ENCODING, 'replace'), e)
+                try:
+                    os.chmod(os.path.normpath(temp_f).encode(headphones.SYS_ENCODING, 'replace'),
+                             int(headphones.CONFIG.FOLDER_PERMISSIONS, 8))
+                except Exception as e:
+                        logger.error("Error trying to change permissions on folder: %s. %s", temp_f.decode(headphones.SYS_ENCODING, 'replace'), e)
             else:
                 logger.debug("Not changing folder permissions, since it is disabled: %s", temp_f.decode(headphones.SYS_ENCODING, 'replace'))
 
@@ -1086,11 +1086,11 @@ def updateFilePermissions(albumpaths):
             for files in f:
                 full_path = os.path.join(r, files)
                 if headphones.CONFIG.FILE_PERMISSIONS_ENABLED:
-                try:
-                    os.chmod(full_path, int(headphones.CONFIG.FILE_PERMISSIONS, 8))
-                except:
-                    logger.error("Could not change permissions for file: %s", full_path)
-                    continue
+                    try:
+                        os.chmod(full_path, int(headphones.CONFIG.FILE_PERMISSIONS, 8))
+                    except:
+                        logger.error("Could not change permissions for file: %s", full_path)
+                        continue
                 else:
                     logger.debug("Not changing file permissions, since it is disabled: %s", full_path.decode(headphones.SYS_ENCODING, 'replace'))
 
