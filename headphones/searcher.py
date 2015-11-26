@@ -37,7 +37,6 @@ from headphones import utorrent, transmission, notifiers, rutracker
 from headphones.common import USER_AGENT
 
 
-
 # Magnet to torrent services, for Black hole. Stolen from CouchPotato.
 TORRENT_TO_MAGNET_SERVICES = [
     # 'https://zoink.it/torrent/%s.torrent',

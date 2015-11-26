@@ -27,7 +27,6 @@ import re
 from beets.mediafile import MediaFile, FileTypeError, UnreadableFileError
 
 
-
 # Modified from https://github.com/Verrus/beets-plugin-featInTitle
 RE_FEATURING = re.compile(r"[fF]t\.|[fF]eaturing|[fF]eat\.|\b[wW]ith\b|&|vs\.")
 

@@ -24,7 +24,6 @@ from bs4 import BeautifulSoup
 from headphones import logger
 
 
-
 # Disable SSL certificate warnings. We have our own handling
 requests.packages.urllib3.disable_warnings()
 

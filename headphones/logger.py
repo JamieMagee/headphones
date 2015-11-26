@@ -28,7 +28,6 @@ from headphones import helpers
 from logutils.queue import QueueHandler, QueueListener
 
 
-
 # These settings are for file logging only
 FILENAME = "headphones.log"
 MAX_SIZE = 1000000  # 1 MB

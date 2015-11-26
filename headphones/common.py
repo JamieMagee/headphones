@@ -26,7 +26,6 @@ import re
 from headphones import version
 
 
-
 # Identify Our Application
 USER_AGENT = 'Headphones/-' + version.HEADPHONES_VERSION + ' (' + platform.system() + ' ' + platform.release() + ')'
 

@@ -31,7 +31,6 @@ from apscheduler.triggers.interval import IntervalTrigger
 from headphones import versioncheck, logger
 
 
-
 # (append new extras to the end)
 POSSIBLE_EXTRAS = [
     "single",
