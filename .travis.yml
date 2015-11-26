@@ -1,13 +1,24 @@
 language: python
 python:
-  - "2.6"
-  - "2.7"
+  - '2.6'
+  - '2.7'
 install:
- - pip install -r requirements.txt
- - pip install pylint==1.3.1
- - pip install pyflakes
- - pip install pep8
+  - pip install -r requirements.txt
+  - pip install pylint==1.3.1
+  - pip install pyflakes
+  - pip install pep8
 script:
   - pep8 headphones
-#  - pylint --rcfile=pylintrc headphones
   - pyflakes headphones
+before_deploy:
+  - find . -name "*.pyc" -delete
+  - find ./lib/ -path "*/*\-info/*" -delete
+  - zip -r -9 headphones.zip data/ headphones/ init-scripts/ lib/ Headphones.py
+deploy:
+  provider: releases
+  api_key:
+    secure: pAD5ZmYhTCnf6Ca5vnwqEudznrl7Jij7ODJOpoxt+a/2SNwc4cssG5xhq/xt/1KjodeaF8uhhLegmeBOmSlYSowPwI4sMMCPcj+J2peGb76ENVfdWXVveFRumNEHEN3ymPPdMVfV0/7S5Dn8EfL3eM1L9K67fxZBoV0WpoLN1Uxcv/E6YLiFjZ9dDsKMbX6SyX0K7aNqRAjrMPHMJu+ROJfUFKApkeaAVxSI7DXWQSOPL2b0XkpE4h9cxLyyU8btk4y842+MgCwHZDEQJ4ohFYE85nAtFjCq7NgBvuTcWSvPfc5ffV6HbkixtyQEeyGL2Q6NrkLQbLHBf2w/nilcMau6HZdbbn88rd4sqgmy6jhGkyzsTVItj3bnLIX5m3Jxkye+2ExTzGGuuVqQjO6+UbnLKNDrHdNLkYDGEFqGRlu6DaVMwnoSmdmEkaS+PP6JxR6CxzYo0TMwXLXhTmX9AturZ97c/bPk/UAL/TGieyu2K3rjr/4EdMZOt13vlJNJBmpDpVnimAQB8NmzKuu15fjJKIZb2gS5l+EtW1tBUqfvCN21kHhkWOWySKZq93zyfkzqMlCMwZnVkPLEGZXJsVPuVjxhrwo1HxT0sUXuU7/ChlFcvjDkOuy6Lgnu5tZM2OvhNN+AeVcT9GGy4MdF5IoViGO0R3JJkM3qBa6JV38=
+  file: headphones.zip
+  on:
+    repo: JamieMagee/headphones
+    branch: pip
