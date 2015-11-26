@@ -11,6 +11,7 @@ script:
   - pep8 headphones
   - pyflakes headphones
 before_deploy:
+  - pip install -r requirements.txt -t lib/
   - find . -name "*.pyc" -delete
   - find ./lib/ -path "*/*\-info/*" -delete
   - zip -r -9 headphones.zip data/ headphones/ init-scripts/ lib/ Headphones.py
