@@ -25,6 +25,8 @@ import os
 import re
 from headphones import version
 
+
+
 # Identify Our Application
 USER_AGENT = 'Headphones/-' + version.HEADPHONES_VERSION + ' (' + platform.system() + ' ' + platform.release() + ')'
 
@@ -116,13 +118,17 @@ class Quality:
                 return x
 
         # TODO: fix quality checking here
-        if Quality.checkName(["mp3", "192"], any, name) and not Quality.checkName(["flac"], all, name):
+        if Quality.checkName(["mp3", "192"], any, name) and not Quality.checkName(["flac"], all,
+                                                                                  name):
             return Quality.B192
-        elif Quality.checkName(["mp3", "256"], any, name) and not Quality.checkName(["flac"], all, name):
+        elif Quality.checkName(["mp3", "256"], any, name) and not Quality.checkName(["flac"], all,
+                                                                                    name):
             return Quality.B256
-        elif Quality.checkName(["mp3", "vbr"], any, name) and not Quality.checkName(["flac"], all, name):
+        elif Quality.checkName(["mp3", "vbr"], any, name) and not Quality.checkName(["flac"], all,
+                                                                                    name):
             return Quality.VBR
-        elif Quality.checkName(["mp3", "320"], any, name) and not Quality.checkName(["flac"], all, name):
+        elif Quality.checkName(["mp3", "320"], any, name) and not Quality.checkName(["flac"], all,
+                                                                                    name):
             return Quality.B320
         else:
             return Quality.UNKNOWN
@@ -172,11 +178,13 @@ class Quality:
 
 Quality.DOWNLOADED = [Quality.compositeStatus(DOWNLOADED, x) for x in Quality.qualityStrings.keys()]
 Quality.SNATCHED = [Quality.compositeStatus(SNATCHED, x) for x in Quality.qualityStrings.keys()]
-Quality.SNATCHED_PROPER = [Quality.compositeStatus(SNATCHED_PROPER, x) for x in Quality.qualityStrings.keys()]
+Quality.SNATCHED_PROPER = [Quality.compositeStatus(SNATCHED_PROPER, x) for x in
+                           Quality.qualityStrings.keys()]
 
 MP3 = Quality.combineQualities([Quality.B192, Quality.B256, Quality.B320, Quality.VBR], [])
 LOSSLESS = Quality.combineQualities([Quality.FLAC], [])
-ANY = Quality.combineQualities([Quality.B192, Quality.B256, Quality.B320, Quality.VBR, Quality.FLAC], [])
+ANY = Quality.combineQualities(
+    [Quality.B192, Quality.B256, Quality.B320, Quality.VBR, Quality.FLAC], [])
 
 qualityPresets = (MP3, LOSSLESS, ANY)
 qualityPresetStrings = {MP3: "MP3 (All bitrates 192+)",

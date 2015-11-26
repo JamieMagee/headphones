@@ -129,7 +129,8 @@ class Rutracker(object):
                 return None
             minimumseeders = int(headphones.CONFIG.NUMBEROFSEEDERS) - 1
 
-            for item in zip(i.find_all(class_='hl-tags'), i.find_all(class_='dl-stub'), i.find_all(class_='seedmed')):
+            for item in zip(i.find_all(class_='hl-tags'), i.find_all(class_='dl-stub'),
+                            i.find_all(class_='seedmed')):
                 title = item[0].get_text()
                 url = item[1].get('href')
                 size_formatted = item[1].get_text()[:-2]
@@ -149,13 +150,14 @@ class Rutracker(object):
                 if size < self.maxsize and minimumseeders < int(seeds):
                     logger.info('Found %s. Size: %s' % (title, size_formatted))
                     # Torrent topic page
-                    torrent_id = dict([part.split('=') for part in urlparse(url)[4].split('&')])['t']
+                    torrent_id = dict([part.split('=') for part in urlparse(url)[4].split('&')])[
+                        't']
                     topicurl = 'http://rutracker.org/forum/viewtopic.php?t=' + torrent_id
                     rulist.append((title, size, topicurl, 'rutracker.org', 'torrent', True))
                 else:
                     logger.info(
                         "%s is larger than the maxsize or has too little seeders for this category, skipping. (Size: %i bytes, Seeders: %i)" % (
-                        title, size, int(seeds)))
+                            title, size, int(seeds)))
 
             if not rulist:
                 logger.info("No valid results found from rutracker")
@@ -176,7 +178,8 @@ class Rutracker(object):
         cookie = {'bb_dl': torrent_id}
         try:
             headers = {'Referer': url}
-            r = self.session.post(url=downloadurl, cookies=cookie, headers=headers, timeout=self.timeout)
+            r = self.session.post(url=downloadurl, cookies=cookie, headers=headers,
+                                  timeout=self.timeout)
             return r.content
         except Exception as e:
             logger.error('Error getting torrent: %s', e)
@@ -196,7 +199,8 @@ class Rutracker(object):
         base_url = host
 
         url = base_url + '/gui/'
-        self.session.auth = (headphones.CONFIG.UTORRENT_USERNAME, headphones.CONFIG.UTORRENT_PASSWORD)
+        self.session.auth = (
+            headphones.CONFIG.UTORRENT_USERNAME, headphones.CONFIG.UTORRENT_PASSWORD)
 
         try:
             r = self.session.get(url + 'token.html')

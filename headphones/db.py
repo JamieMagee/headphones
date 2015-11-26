@@ -91,14 +91,16 @@ class DBConnection:
 
         changesBefore = self.connection.total_changes
 
-        update_query = "UPDATE " + tableName + " SET " + ", ".join(self.genParams(valueDict)) + " WHERE " + " AND ".join(
+        update_query = "UPDATE " + tableName + " SET " + ", ".join(
+            self.genParams(valueDict)) + " WHERE " + " AND ".join(
             self.genParams(keyDict))
 
         self.action(update_query, valueDict.values() + keyDict.values())
 
         if self.connection.total_changes == changesBefore:
             insert_query = (
-                "INSERT INTO " + tableName + " (" + ", ".join(valueDict.keys() + keyDict.keys()) + ")" +
+                "INSERT INTO " + tableName + " (" + ", ".join(
+                    valueDict.keys() + keyDict.keys()) + ")" +
                 " VALUES (" + ", ".join(["?"] * len(valueDict.keys() + keyDict.keys())) + ")"
             )
             try:

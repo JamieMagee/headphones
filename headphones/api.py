@@ -16,13 +16,18 @@
 import json
 
 import headphones
-from headphones import db, mb, updater, importer, searcher, cache, postprocessor, versioncheck, logger
+from headphones import db, mb, updater, importer, searcher, cache, postprocessor, versioncheck, \
+    logger
 
-cmd_list = ['getIndex', 'getArtist', 'getAlbum', 'getUpcoming', 'getWanted', 'getSnatched', 'getSimilar', 'getHistory',
+cmd_list = ['getIndex', 'getArtist', 'getAlbum', 'getUpcoming', 'getWanted', 'getSnatched',
+            'getSimilar', 'getHistory',
             'getLogs',
-            'findArtist', 'findAlbum', 'addArtist', 'delArtist', 'pauseArtist', 'resumeArtist', 'refreshArtist',
-            'addAlbum', 'queueAlbum', 'unqueueAlbum', 'forceSearch', 'forceProcess', 'forceActiveArtistsUpdate',
-            'getVersion', 'checkGithub', 'shutdown', 'restart', 'update', 'getArtistArt', 'getAlbumArt',
+            'findArtist', 'findAlbum', 'addArtist', 'delArtist', 'pauseArtist', 'resumeArtist',
+            'refreshArtist',
+            'addAlbum', 'queueAlbum', 'unqueueAlbum', 'forceSearch', 'forceProcess',
+            'forceActiveArtistsUpdate',
+            'getVersion', 'checkGithub', 'shutdown', 'restart', 'update', 'getArtistArt',
+            'getAlbumArt',
             'getArtistInfo', 'getAlbumInfo', 'getArtistThumb', 'getAlbumThumb', 'clearLogs',
             'choose_specific_download', 'download_specific_release']
 

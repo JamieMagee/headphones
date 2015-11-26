@@ -124,11 +124,12 @@ def checkGithub():
     # Get the latest version available from github
     logger.info('Retrieving latest version information from GitHub')
     url = 'https://api.github.com/repos/%s/headphones/commits/%s' % (
-    headphones.CONFIG.GIT_USER, headphones.CONFIG.GIT_BRANCH)
+        headphones.CONFIG.GIT_USER, headphones.CONFIG.GIT_BRANCH)
     version = request.request_json(url, timeout=20, validator=lambda x: type(x) == dict)
 
     if version is None:
-        logger.warn('Could not get the latest version from GitHub. Are you running a local development version?')
+        logger.warn(
+            'Could not get the latest version from GitHub. Are you running a local development version?')
         return headphones.CURRENT_VERSION
 
     headphones.LATEST_VERSION = version['sha']
@@ -136,7 +137,8 @@ def checkGithub():
 
     # See how many commits behind we are
     if not headphones.CURRENT_VERSION:
-        logger.info('You are running an unknown version of Headphones. Run the updater to identify your version')
+        logger.info(
+            'You are running an unknown version of Headphones. Run the updater to identify your version')
         return headphones.LATEST_VERSION
 
     if headphones.LATEST_VERSION == headphones.CURRENT_VERSION:
@@ -145,8 +147,9 @@ def checkGithub():
 
     logger.info('Comparing currently installed version with latest GitHub version')
     url = 'https://api.github.com/repos/%s/headphones/compare/%s...%s' % (
-    headphones.CONFIG.GIT_USER, headphones.LATEST_VERSION, headphones.CURRENT_VERSION)
-    commits = request.request_json(url, timeout=20, whitelist_status_code=404, validator=lambda x: type(x) == dict)
+        headphones.CONFIG.GIT_USER, headphones.LATEST_VERSION, headphones.CURRENT_VERSION)
+    commits = request.request_json(url, timeout=20, whitelist_status_code=404,
+                                   validator=lambda x: type(x) == dict)
 
     if commits is None:
         logger.warn('Could not get commits behind from GitHub.')
@@ -160,7 +163,8 @@ def checkGithub():
         headphones.COMMITS_BEHIND = 0
 
     if headphones.COMMITS_BEHIND > 0:
-        logger.info('New version is available. You are %s commits behind' % headphones.COMMITS_BEHIND)
+        logger.info(
+            'New version is available. You are %s commits behind' % headphones.COMMITS_BEHIND)
     elif headphones.COMMITS_BEHIND == 0:
         logger.info('Headphones is up to date')
 
@@ -188,7 +192,7 @@ def update():
 
     else:
         tar_download_url = 'https://github.com/%s/headphones/tarball/%s' % (
-        headphones.CONFIG.GIT_USER, headphones.CONFIG.GIT_BRANCH)
+            headphones.CONFIG.GIT_USER, headphones.CONFIG.GIT_BRANCH)
         update_dir = os.path.join(headphones.PROG_DIR, 'update')
         version_path = os.path.join(headphones.PROG_DIR, 'version.txt')
 
@@ -217,7 +221,8 @@ def update():
         os.remove(tar_download_path)
 
         # Find update dir name
-        update_dir_contents = [x for x in os.listdir(update_dir) if os.path.isdir(os.path.join(update_dir, x))]
+        update_dir_contents = [x for x in os.listdir(update_dir) if
+                               os.path.isdir(os.path.join(update_dir, x))]
         if len(update_dir_contents) != 1:
             logger.error("Invalid update data, update failed: " + str(update_dir_contents))
             return

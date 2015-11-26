@@ -185,8 +185,9 @@ def removeTorrent(hash, remove_data=False):
                 uTorrentClient.remove(hash, remove_data)
                 return True
             else:
-                logger.info('%s has not finished seeding yet, torrent will not be removed, will try again on next run' %
-                            torrent[2])
+                logger.info(
+                    '%s has not finished seeding yet, torrent will not be removed, will try again on next run' %
+                    torrent[2])
                 return False
     return False
 
@@ -237,7 +238,8 @@ def getFolder(hash):
     active_dir, completed_dir = getSettingsDirectories()
 
     if not active_dir:
-        logger.error('Could not get "Put new downloads in:" directory from uTorrent settings, please ensure it is set')
+        logger.error(
+            'Could not get "Put new downloads in:" directory from uTorrent settings, please ensure it is set')
         return None
 
     # Get Torrent Folder Name

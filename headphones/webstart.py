@@ -32,7 +32,8 @@ def initialize(options):
     if enable_https:
         # If either the HTTPS certificate or key do not exist, try to make
         # self-signed ones.
-        if not (https_cert and os.path.exists(https_cert)) or not (https_key and os.path.exists(https_key)):
+        if not (https_cert and os.path.exists(https_cert)) or not (
+                    https_key and os.path.exists(https_key)):
             if not create_https_certificates(https_cert, https_key):
                 logger.warn("Unable to create certificate and key. Disabling " \
                             "HTTPS")
@@ -98,7 +99,8 @@ def initialize(options):
     }
 
     if options['http_password']:
-        logger.info("Web server authentication is enabled, username is '%s'", options['http_username'])
+        logger.info("Web server authentication is enabled, username is '%s'",
+                    options['http_username'])
 
         conf['/'].update({
             'tools.auth_basic.on': True,
@@ -117,7 +119,8 @@ def initialize(options):
         cherrypy.process.servers.check_port(str(options['http_host']), options['http_port'])
         cherrypy.server.start()
     except IOError:
-        sys.stderr.write('Failed to start on port: %i. Is something else running?\n' % (options['http_port']))
+        sys.stderr.write(
+            'Failed to start on port: %i. Is something else running?\n' % (options['http_port']))
         sys.exit(1)
 
     cherrypy.server.wait()

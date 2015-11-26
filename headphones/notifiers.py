@@ -247,9 +247,9 @@ class XBMC(object):
             logger.info('Sending notification command to XMBC @ ' + host)
             try:
                 version = \
-                self._sendjson(host, 'Application.GetProperties', {'properties': ['version']})[
-                    'version'][
-                    'major']
+                    self._sendjson(host, 'Application.GetProperties', {'properties': ['version']})[
+                        'version'][
+                        'major']
 
                 if version < 12:  # Eden
                     notification = header + "," + message + "," + time + "," + albumartpath
@@ -387,9 +387,9 @@ class Plex(object):
             logger.info('Sending notification command to Plex client @ ' + host)
             try:
                 version = \
-                self._sendjson(host, 'Application.GetProperties', {'properties': ['version']})[
-                    'version'][
-                    'major']
+                    self._sendjson(host, 'Application.GetProperties', {'properties': ['version']})[
+                        'version'][
+                        'major']
 
                 if version < 12:  # Eden
                     notification = header + "," + message + "," + time + "," + albumartpath

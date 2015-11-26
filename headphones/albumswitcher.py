@@ -79,7 +79,8 @@ def switch(AlbumID, ReleaseID):
         'SELECT * from tracks WHERE AlbumID=? AND Location IS NOT NULL', [AlbumID]))
 
     if oldalbumdata['Status'] == 'Skipped' and (
-        (have_track_count / float(total_track_count)) >= (headphones.CONFIG.ALBUM_COMPLETION_PCT / 100.0)):
+                (have_track_count / float(total_track_count)) >= (
+                        headphones.CONFIG.ALBUM_COMPLETION_PCT / 100.0)):
         myDB.action(
             'UPDATE albums SET Status=? WHERE AlbumID=?', ['Downloaded', AlbumID])
 
@@ -88,7 +89,8 @@ def switch(AlbumID, ReleaseID):
         'SELECT TrackTitle from tracks WHERE ArtistID=? AND AlbumID IN (SELECT AlbumID FROM albums WHERE Status != "Ignored")',
         [newalbumdata['ArtistID']]))
     havetracks = len(myDB.select(
-        'SELECT TrackTitle from tracks WHERE ArtistID=? AND Location IS NOT NULL', [newalbumdata['ArtistID']]))
+        'SELECT TrackTitle from tracks WHERE ArtistID=? AND Location IS NOT NULL',
+        [newalbumdata['ArtistID']]))
 
     controlValueDict = {"ArtistID": newalbumdata['ArtistID']}
 

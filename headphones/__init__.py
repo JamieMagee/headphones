@@ -30,6 +30,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from headphones import versioncheck, logger
 
+
+
 # (append new extras to the end)
 POSSIBLE_EXTRAS = [
     "single",
@@ -290,11 +292,13 @@ def initialize_scheduler():
                 minutes = CONFIG.CHECK_GITHUB_INTERVAL
             else:
                 minutes = 0
-            schedule_job(versioncheck.checkGithub, 'Check GitHub for updates', hours=0, minutes=minutes)
+            schedule_job(versioncheck.checkGithub, 'Check GitHub for updates', hours=0,
+                         minutes=minutes)
 
         # Remove Torrent + data if Post Processed and finished Seeding
         minutes = CONFIG.TORRENT_REMOVAL_INTERVAL
-        schedule_job(torrentfinished.checkTorrentFinished, 'Torrent removal check', hours=0, minutes=minutes)
+        schedule_job(torrentfinished.checkTorrentFinished, 'Torrent removal check', hours=0,
+                     minutes=minutes)
 
         # Start scheduler
         if start_jobs and len(SCHED.get_jobs()):

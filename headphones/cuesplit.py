@@ -314,7 +314,8 @@ class CueFile(File):
             line_content = c[line_index]
             search_result = re.search(CUE_TRACK, line_content, re.I)
             if not search_result:
-                raise ValueError('inconsistent CUE sheet, TRACK expected at line {0}'.format(line_index + 1))
+                raise ValueError(
+                    'inconsistent CUE sheet, TRACK expected at line {0}'.format(line_index + 1))
             track_nr = int(search_result.group(1))
             line_index += 1
             next_track = False
@@ -353,7 +354,8 @@ class CueFile(File):
                         track_meta['dcpflag'] = True
                         line_index += 1
                     else:
-                        raise ValueError('unknown entry in track error, line {0}'.format(line_index + 1))
+                        raise ValueError(
+                            'unknown entry in track error, line {0}'.format(line_index + 1))
                 else:
                     next_track = True
 
@@ -406,9 +408,11 @@ class CueFile(File):
         for i in range(len(self.tracks)):
             if self.tracks[i]:
                 if self.tracks[i].get('artist'):
-                    content += 'track' + int_to_str(i) + 'artist' + '\t' + self.tracks[i].get('artist') + '\n'
+                    content += 'track' + int_to_str(i) + 'artist' + '\t' + self.tracks[i].get(
+                        'artist') + '\n'
                 if self.tracks[i].get('title'):
-                    content += 'track' + int_to_str(i) + 'title' + '\t' + self.tracks[i].get('title') + '\n'
+                    content += 'track' + int_to_str(i) + 'title' + '\t' + self.tracks[i].get(
+                        'title') + '\n'
         return content
 
     def htoa(self):
@@ -449,7 +453,8 @@ class MetaFile(File):
                         raise ValueError('Syntax error in album meta file')
                     if not content['tracks'][int(parsed_track.group(1))]:
                         content['tracks'][int(parsed_track.group(1))] = dict()
-                    content['tracks'][int(parsed_track.group(1))][parsed_track.group(2)] = parsed_line.group(2)
+                    content['tracks'][int(parsed_track.group(1))][
+                        parsed_track.group(2)] = parsed_line.group(2)
                 else:
                     content[parsed_line.group(1)] = parsed_line.group(2)
 
@@ -480,7 +485,8 @@ class MetaFile(File):
 
     def folders(self):
         artist = self.content['artist']
-        album = self.content['date'] + ' - ' + self.content['title'] + ' (' + self.content['label'] + ' - ' + \
+        album = self.content['date'] + ' - ' + self.content['title'] + ' (' + self.content[
+            'label'] + ' - ' + \
                 self.content['catalog'] + ')'
         return artist, album
 
@@ -579,7 +585,8 @@ def split(albumpath):
         import getXldProfile
         xldprofile, xldformat, _ = getXldProfile.getXldProfile(headphones.CONFIG.XLDPROFILE)
         if not xldformat:
-            raise ValueError('Details for xld profile "%s" not found, cannot split cue' % (xldprofile))
+            raise ValueError(
+                'Details for xld profile "%s" not found, cannot split cue' % (xldprofile))
         else:
             if headphones.CONFIG.ENCODERFOLDER:
                 splitter = os.path.join(headphones.CONFIG.ENCODERFOLDER, 'xld')

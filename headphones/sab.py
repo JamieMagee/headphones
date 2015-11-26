@@ -29,7 +29,8 @@ def sab_api_call(request_type=None, params={}, **kwargs):
         headphones.CONFIG.SAB_HOST = 'http://' + headphones.CONFIG.SAB_HOST
 
     if headphones.CONFIG.SAB_HOST.endswith('/'):
-        headphones.CONFIG.SAB_HOST = headphones.CONFIG.SAB_HOST[0:len(headphones.CONFIG.SAB_HOST) - 1]
+        headphones.CONFIG.SAB_HOST = headphones.CONFIG.SAB_HOST[
+                                     0:len(headphones.CONFIG.SAB_HOST) - 1]
 
     url = headphones.CONFIG.SAB_HOST + "/" + "api?"
 
@@ -84,7 +85,8 @@ def sendNZB(nzb):
         response = sab_api_call('send_nzb', params=params)
     elif nzb.resultType == "nzbdata":
         cookies = cookielib.CookieJar()
-        response = sab_api_call('send_nzb', params=params, method="post", files=files, cookies=cookies, headers=headers)
+        response = sab_api_call('send_nzb', params=params, method="post", files=files,
+                                cookies=cookies, headers=headers)
 
     if not response:
         logger.info(u"No data returned from SABnzbd, NZB not sent")

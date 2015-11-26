@@ -26,6 +26,8 @@ import os
 import re
 from beets.mediafile import MediaFile, FileTypeError, UnreadableFileError
 
+
+
 # Modified from https://github.com/Verrus/beets-plugin-featInTitle
 RE_FEATURING = re.compile(r"[fF]t\.|[fF]eaturing|[fF]eat\.|\b[wW]ith\b|&|vs\.")
 
@@ -34,8 +36,10 @@ RE_CD = re.compile(r"^(CD|dics)\s*[0-9]+$", re.I)
 
 
 def multikeysort(items, columns):
-    comparers = [((itemgetter(col[1:].strip()), -1) if col.startswith('-') else (itemgetter(col.strip()), 1)) for col in
-                 columns]
+    comparers = [
+        ((itemgetter(col[1:].strip()), -1) if col.startswith('-') else (itemgetter(col.strip()), 1))
+        for col in
+        columns]
 
     def comparer(left, right):
         for fn, mult in comparers:
@@ -216,7 +220,8 @@ def replace_illegal_chars(string, type="file"):
 
 def cleanName(string):
     pass1 = latinToAscii(string).lower()
-    out_string = re.sub('[\.\-\/\!\@\#\$\%\^\&\*\(\)\+\-\"\'\,\;\:\[\]\{\}\<\>\=\_]', '', pass1).encode('utf-8')
+    out_string = re.sub('[\.\-\/\!\@\#\$\%\^\&\*\(\)\+\-\"\'\,\;\:\[\]\{\}\<\>\=\_]', '',
+                        pass1).encode('utf-8')
 
     return out_string
 
@@ -314,10 +319,12 @@ def expand_subfolders(f):
         # extra folders with a higher depth.
         extra_media_folders = [media_folder[:min(path_depths)] for media_folder in media_folders if
                                len(media_folder) > min(path_depths)]
-        extra_media_folders = list(set([os.path.join(*media_folder) for media_folder in extra_media_folders]))
+        extra_media_folders = list(
+            set([os.path.join(*media_folder) for media_folder in extra_media_folders]))
 
-        logger.info("Please look at the following folder(s), since they cause the depth difference: %s",
-                    extra_media_folders)
+        logger.info(
+            "Please look at the following folder(s), since they cause the depth difference: %s",
+            extra_media_folders)
         return
 
     # Convert back to paths and remove duplicates, which may be there after
@@ -377,7 +384,8 @@ def extract_data(s):
     s = s.replace('_', ' ')
 
     # headphones default format
-    pattern = re.compile(r'(?P<name>.*?)\s\-\s(?P<album>.*?)\s[\[\(](?P<year>.*?)[\]\)]', re.VERBOSE)
+    pattern = re.compile(r'(?P<name>.*?)\s\-\s(?P<album>.*?)\s[\[\(](?P<year>.*?)[\]\)]',
+                         re.VERBOSE)
     match = pattern.match(s)
 
     if match:
@@ -463,7 +471,8 @@ def extract_metadata(f):
                 old_album = new_albums[index]
                 new_albums[index] = RE_CD_ALBUM.sub("", album).strip()
 
-                logger.debug("Stripped albumd number identifier: %s -> %s", old_album, new_albums[index])
+                logger.debug("Stripped albumd number identifier: %s -> %s", old_album,
+                             new_albums[index])
 
         # Remove duplicates
         new_albums = list(set(new_albums))
@@ -493,7 +502,8 @@ def extract_metadata(f):
             return (artist, albums[0], years[0])
 
     # Not sure what to do here.
-    logger.info("Found %d artists, %d albums and %d years in metadata, so ignoring", len(artists), len(albums),
+    logger.info("Found %d artists, %d albums and %d years in metadata, so ignoring", len(artists),
+                len(albums),
                 len(years))
     logger.debug("Artists: %s, Albums: %s, Years: %s", artists, albums, years)
 
@@ -520,8 +530,10 @@ def preserve_torrent_directory(albumpath):
     Copy torrent directory to headphones-modified to keep files for seeding.
     """
     from headphones import logger
-    new_folder = os.path.join(albumpath, 'headphones-modified'.encode(headphones.SYS_ENCODING, 'replace'))
-    logger.info("Copying files to 'headphones-modified' subfolder to preserve downloaded files for seeding")
+    new_folder = os.path.join(albumpath,
+                              'headphones-modified'.encode(headphones.SYS_ENCODING, 'replace'))
+    logger.info(
+        "Copying files to 'headphones-modified' subfolder to preserve downloaded files for seeding")
     try:
         shutil.copytree(albumpath, new_folder)
         return new_folder
@@ -574,8 +586,9 @@ def cue_split(albumpath):
 
 def extract_logline(s):
     # Default log format
-    pattern = re.compile(r'(?P<timestamp>.*?)\s\-\s(?P<level>.*?)\s*\:\:\s(?P<thread>.*?)\s\:\s(?P<message>.*)',
-                         re.VERBOSE)
+    pattern = re.compile(
+        r'(?P<timestamp>.*?)\s\-\s(?P<level>.*?)\s*\:\:\s(?P<thread>.*?)\s\:\s(?P<message>.*)',
+        re.VERBOSE)
     match = pattern.match(s)
     if match:
         timestamp = match.group("timestamp")
@@ -636,7 +649,8 @@ def smartMove(src, dest, delete=True):
                     os.rename(src, os.path.join(source_dir, newfile))
                     filename = newfile
                 except Exception as e:
-                    logger.warn('Error renaming %s: %s', src.decode(headphones.SYS_ENCODING, 'replace'), e)
+                    logger.warn('Error renaming %s: %s',
+                                src.decode(headphones.SYS_ENCODING, 'replace'), e)
                 break
 
     try:
@@ -646,7 +660,8 @@ def smartMove(src, dest, delete=True):
             shutil.copy(os.path.join(source_dir, filename), os.path.join(dest, filename))
             return True
     except Exception as e:
-        logger.warn('Error moving file %s: %s', filename.decode(headphones.SYS_ENCODING, 'replace'), e)
+        logger.warn('Error moving file %s: %s', filename.decode(headphones.SYS_ENCODING, 'replace'),
+                    e)
 
 
 def walk_directory(basedir, followlinks=True):
@@ -767,11 +782,13 @@ def create_https_certificates(ssl_cert, ssl_key):
     # Create the CA Certificate
     cakey = createKeyPair(TYPE_RSA, 2048)
     careq = createCertRequest(cakey, CN="Certificate Authority")
-    cacert = createCertificate(careq, (careq, cakey), serial, (0, 60 * 60 * 24 * 365 * 10))  # ten years
+    cacert = createCertificate(careq, (careq, cakey), serial,
+                               (0, 60 * 60 * 24 * 365 * 10))  # ten years
 
     pkey = createKeyPair(TYPE_RSA, 2048)
     req = createCertRequest(pkey, CN="Headphones")
-    cert = createCertificate(req, (cacert, cakey), serial, (0, 60 * 60 * 24 * 365 * 10))  # ten years
+    cert = createCertificate(req, (cacert, cakey), serial,
+                             (0, 60 * 60 * 24 * 365 * 10))  # ten years
 
     # Save the key and certificate to disk
     try:

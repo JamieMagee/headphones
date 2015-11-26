@@ -181,15 +181,18 @@ class Cache(object):
         if ArtistID:
             self.id = ArtistID
             self.id_type = 'artist'
-            db_info = myDB.action('SELECT Summary, Content, LastUpdated FROM descriptions WHERE ArtistID=?',
-                                  [self.id]).fetchone()
+            db_info = myDB.action(
+                'SELECT Summary, Content, LastUpdated FROM descriptions WHERE ArtistID=?',
+                [self.id]).fetchone()
         else:
             self.id = AlbumID
             self.id_type = 'album'
-            db_info = myDB.action('SELECT Summary, Content, LastUpdated FROM descriptions WHERE ReleaseGroupID=?',
-                                  [self.id]).fetchone()
+            db_info = myDB.action(
+                'SELECT Summary, Content, LastUpdated FROM descriptions WHERE ReleaseGroupID=?',
+                [self.id]).fetchone()
 
-        if not db_info or not db_info['LastUpdated'] or not self._is_current(date=db_info['LastUpdated']):
+        if not db_info or not db_info['LastUpdated'] or not self._is_current(
+                date=db_info['LastUpdated']):
 
             self._update_cache()
             info_dict = {'Summary': self.info_summary, 'Content': self.info_content}
@@ -310,15 +313,19 @@ class Cache(object):
                 logger.debug('No artist thumbnail image found')
 
         else:
-            dbalbum = myDB.action('SELECT ArtistName, AlbumTitle, ReleaseID FROM albums WHERE AlbumID=?',
-                                  [self.id]).fetchone()
+            dbalbum = myDB.action(
+                'SELECT ArtistName, AlbumTitle, ReleaseID FROM albums WHERE AlbumID=?',
+                [self.id]).fetchone()
             if dbalbum['ReleaseID'] != self.id:
-                data = lastfm.request_lastfm("album.getinfo", mbid=dbalbum['ReleaseID'], api_key=LASTFM_API_KEY)
+                data = lastfm.request_lastfm("album.getinfo", mbid=dbalbum['ReleaseID'],
+                                             api_key=LASTFM_API_KEY)
                 if not data:
                     data = lastfm.request_lastfm("album.getinfo", artist=dbalbum['ArtistName'],
-                                                 album=dbalbum['AlbumTitle'], api_key=LASTFM_API_KEY)
+                                                 album=dbalbum['AlbumTitle'],
+                                                 api_key=LASTFM_API_KEY)
             else:
-                data = lastfm.request_lastfm("album.getinfo", artist=dbalbum['ArtistName'], album=dbalbum['AlbumTitle'],
+                data = lastfm.request_lastfm("album.getinfo", artist=dbalbum['ArtistName'],
+                                             album=dbalbum['AlbumTitle'],
                                              api_key=LASTFM_API_KEY)
 
             if not data:
@@ -361,7 +368,8 @@ class Cache(object):
         # Save the image URL to the database
         if image_url:
             if self.id_type == 'artist':
-                myDB.action('UPDATE artists SET ArtworkURL=? WHERE ArtistID=?', [image_url, self.id])
+                myDB.action('UPDATE artists SET ArtworkURL=? WHERE ArtistID=?',
+                            [image_url, self.id])
             else:
                 myDB.action('UPDATE albums SET ArtworkURL=? WHERE AlbumID=?', [image_url, self.id])
 
@@ -382,7 +390,8 @@ class Cache(object):
                 if not os.path.isdir(self.path_to_art_cache):
                     try:
                         os.makedirs(self.path_to_art_cache)
-                        os.chmod(self.path_to_art_cache, int(headphones.CONFIG.FOLDER_PERMISSIONS, 8))
+                        os.chmod(self.path_to_art_cache,
+                                 int(headphones.CONFIG.FOLDER_PERMISSIONS, 8))
                     except OSError as e:
                         logger.error('Unable to create artwork cache dir. Error: %s', e)
                         self.artwork_errors = True
@@ -397,7 +406,8 @@ class Cache(object):
 
                 ext = os.path.splitext(image_url)[1]
 
-                artwork_path = os.path.join(self.path_to_art_cache, self.id + '.' + helpers.today() + ext)
+                artwork_path = os.path.join(self.path_to_art_cache,
+                                            self.id + '.' + helpers.today() + ext)
                 try:
                     with open(artwork_path, 'wb') as f:
                         f.write(artwork)
@@ -411,7 +421,7 @@ class Cache(object):
         # Grab the thumbnail as well if we're getting the full artwork (as long
         # as it's missing/outdated.
         if thumb_url and self.query_type in ['thumb', 'artwork'] and not (
-            self.thumb_files and self._is_current(self.thumb_files[0])):
+                    self.thumb_files and self._is_current(self.thumb_files[0])):
             artwork = request.request_content(thumb_url, timeout=20)
 
             if artwork:
@@ -419,7 +429,8 @@ class Cache(object):
                 if not os.path.isdir(self.path_to_art_cache):
                     try:
                         os.makedirs(self.path_to_art_cache)
-                        os.chmod(self.path_to_art_cache, int(headphones.CONFIG.FOLDER_PERMISSIONS, 8))
+                        os.chmod(self.path_to_art_cache,
+                                 int(headphones.CONFIG.FOLDER_PERMISSIONS, 8))
                     except OSError as e:
                         logger.error('Unable to create artwork cache dir. Error: %s' + e)
                         self.thumb_errors = True
@@ -434,7 +445,8 @@ class Cache(object):
 
                 ext = os.path.splitext(image_url)[1]
 
-                thumb_path = os.path.join(self.path_to_art_cache, 'T_' + self.id + '.' + helpers.today() + ext)
+                thumb_path = os.path.join(self.path_to_art_cache,
+                                          'T_' + self.id + '.' + helpers.today() + ext)
                 try:
                     with open(thumb_path, 'wb') as f:
                         f.write(artwork)

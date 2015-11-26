@@ -42,6 +42,7 @@ def checkTorrentFinished():
                 torrent_removed = utorrent.removeTorrent(hash, True)
 
             if torrent_removed:
-                myDB.action('DELETE from snatched WHERE status = "Seed_Processed" and AlbumID=?', [albumid])
+                myDB.action('DELETE from snatched WHERE status = "Seed_Processed" and AlbumID=?',
+                            [albumid])
 
     logger.info("Checking finished torrents completed")

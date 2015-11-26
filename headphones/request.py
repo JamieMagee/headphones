@@ -23,6 +23,8 @@ import requests
 from bs4 import BeautifulSoup
 from headphones import logger
 
+
+
 # Disable SSL certificate warnings. We have our own handling
 requests.packages.urllib3.disable_warnings()
 
@@ -210,7 +212,7 @@ def server_message(response):
 
     # First attempt is to 'read' the response as HTML
     if response.headers.get("content-type") and \
-            "text/html" in response.headers.get("content-type"):
+                    "text/html" in response.headers.get("content-type"):
         try:
             soup = BeautifulSoup(response.content, "html5lib")
         except Exception:
